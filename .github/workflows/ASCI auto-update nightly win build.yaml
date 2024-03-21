@@ -1,0 +1,193 @@
+# Deze workflow voert eerst een autoupdate uit: van de officile rustdesk github naar onze fork. Daarna compileert
+# hij de .exe en plaatst deze in https://github.com/ANB5Dev/rustdesk/releases/tag/nightly
+#
+# Gebaseerd op:
+# - flutter-nightly.yml (on: schedule)
+# - https://github.com/marketplace/actions/auto-update (job: autoupdate)
+# - flutter-build.yml (env, jobs: build-RustDeskTempTopMostWindow, build-for-windows-flutter; dependencies op autoupdate toegevoegd, signing opties verwijderd)
+#
+# Houd de originele flutter-build.yml in de gaten voor aanpassingen; die zijn hier wellicht ook nodig
+
+name: ASCI auto-update nightly win build
+
+on:
+  # schedule build every night
+  schedule:
+    - cron: "0 0 * * *"
+    
+  # options for manual run
+  workflow_dispatch:
+    inputs:
+      upload-artifact:
+        type: boolean
+        default: true
+      upload-tag:
+        type: string
+        default: "nightly"
+      version:
+        type: string
+        default: "git-ASCI"
+
+env:
+  # ASCI custom options
+  RS_PUB_KEY: "jrCu0lz10CnMbwd0UU2DJ0k7mt8xc3lVKJ68zpNHGXA="
+  RENDEZVOUS_SERVER: "89.188.29.77"
+  API_SERVER: "https://89.188.29.77"
+  VERSION: "${{ inputs.version || 'git-ASCI' }}"
+  TAG_NAME: "${{ inputs.upload-tag || 'nightly' }}"
+  UPLOAD_ARTIFACT: "${{ inputs.upload-artifact || true }}"
+
+  # vcpkg version: 2023.10.19
+  # for multiarch gcc compatibility
+  VCPKG_COMMIT_ID: "8eb57355a4ffb410a2e94c07b4dca2dffbee8e50"
+
+  LLVM_VERSION: "15.0.6"
+  FLUTTER_VERSION: "3.16.9"
+  FLUTTER_RUST_BRIDGE_VERSION: "1.80.1"
+
+
+jobs:
+
+  autoupdate:
+    name: autoupdate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker://chinthakagodawita/autoupdate-action:v1
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          
+  build-RustDeskTempTopMostWindow:
+    uses: ./.github/workflows/third-party-RustDeskTempTopMostWindow.yml
+    needs: [autoupdate]
+    with:
+      upload-artifact: ${{ inputs.upload-artifact || true }}
+      target: windows-2019
+      configuration: Release
+      platform: x64
+      target_version: Windows10
+    strategy:
+        fail-fast: false
+
+  build-for-windows-flutter:
+    name: ${{ matrix.job.target }} (${{ matrix.job.os }})
+    needs: [autoupdate, build-RustDeskTempTopMostWindow]
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          # - { target: i686-pc-windows-msvc        , os: windows-2019                  }
+          # - { target: x86_64-pc-windows-gnu       , os: windows-2019                  }
+          - { target: x86_64-pc-windows-msvc, os: windows-2019, arch: x86_64 }
+          # - { target: aarch64-pc-windows-msvc, os: windows-2019, arch: aarch64 }
+    steps:
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: ${{ env.LLVM_VERSION }}
+
+      - name: Install flutter
+        uses: subosito/flutter-action@v2.12.0 #https://github.com/subosito/flutter-action/issues/277
+        with:
+          channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Replace engine with rustdesk custom flutter engine
+        run: |
+          flutter doctor -v
+          flutter precache --windows
+          Invoke-WebRequest -Uri https://github.com/fufesou/flutter-engine/releases/download/bugfix-subwindow-crash-3.16.9-apply-pull-47787/windows-x64-release.zip -OutFile windows-x64-flutter-release.zip
+          Expand-Archive windows-x64-flutter-release.zip -DestinationPath .
+          mv -Force windows-x64-release/*  C:/hostedtoolcache/windows/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin/cache/artifacts/engine/windows-x64-release/
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+          targets: ${{ matrix.job.target }}
+          components: ''
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: ${{ matrix.job.os }}
+
+      - name: Install flutter rust bridge deps
+        run: |
+          git config --global core.longpaths true
+          cargo install flutter_rust_bridge_codegen --version ${{ env.FLUTTER_RUST_BRIDGE_VERSION }} --features "uuid"
+          Push-Location flutter ; flutter pub get ; Pop-Location
+          ~/.cargo/bin/flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart
+
+      - name: Setup vcpkg with Github Actions binary cache
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: C:\vcpkg
+          vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
+
+      - name: Install vcpkg dependencies
+        run: |
+          $VCPKG_ROOT/vcpkg install --triplet x64-windows-static --x-install-root="$VCPKG_ROOT/installed"
+        shell: bash
+
+      - name: Build rustdesk
+        run: python3 .\build.py --portable --hwcodec --flutter --gpucodec --skip-portable-pack
+
+      - name: find Runner.res
+        # Windows: find Runner.res (compiled from ./flutter/windows/runner/Runner.rc), copy to ./Runner.res
+        # Runner.rc does not contain actual version, but Runner.res does
+        continue-on-error: true
+        shell: bash
+        run: |
+          runner_res=$(find . -name "Runner.res");
+          if [ "$runner_res" == "" ]; then
+            echo "Runner.res: not found";
+          else
+            echo "Runner.res: $runner_res";
+            cp $runner_res ./libs/portable/Runner.res;
+            echo "list ./libs/portable/Runner.res";
+            ls -l ./libs/portable/Runner.res;
+          fi
+
+      - name: Download RustDeskTempTopMostWindow artifacts
+        uses: actions/download-artifact@master
+        if: ${{ inputs.upload-artifact || true }}
+        with:
+          name: topmostwindow-artifacts
+          path: './flutter/build/windows/x64/runner/Release/'
+
+      - name: Compress unsigned
+        shell: bash
+        run: |
+          mv ./flutter/build/windows/x64/runner/Release ./rustdesk
+          tar czf rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}-unsigned.tar.gz rustdesk
+
+      - name: Build self-extracted executable
+        shell: bash
+        if: env.UPLOAD_ARTIFACT == 'true'
+        run: |
+          pushd ./libs/portable
+          pip3 install -r requirements.txt
+          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
+          popd
+          mkdir -p ./SignOutput
+          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}-unsigned.exe
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v1
+        if: env.UPLOAD_ARTIFACT == 'true'
+        with:
+          prerelease: true
+          tag_name: ${{ env.TAG_NAME }}
+          files: |
+            ./SignOutput/rustdesk-*.exe
