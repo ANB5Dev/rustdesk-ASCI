@@ -1,9 +1,10 @@
 # Deze workflow compileert de .exe en plaatst deze in https://github.com/ANB5Dev/rustdesk/releases/tag/nightly
 #
 # Gebaseerd op flutter-build.yml:
-# - jobs voor fallback en non-windows verwijderd (alle jobs behalve 'build-RustDeskTempTopMostWindow' en 'build-for-windows-flutter')
-# - steps voor signing verwijderd: 'Sign rustdesk files', 'Add MSBuild to PATH', 'Build msi', 'Sign rustdesk self-extracted file'
-# - step 'Publish Release' aangepast: *.msi verwijderd
+# - in 'env': ASCI custom opties
+# - in 'jobs': de jobs voor fallback en non-windows verwijderd (alle jobs behalve 'build-RustDeskTempTopMostWindow' en 'build-for-windows-flutter')
+# - in 'steps' van 'build-for-windows-flutter': alle steps voor signing verwijderd: 'Sign rustdesk files', 'Add MSBuild to PATH', 'Build msi', 'Sign rustdesk self-extracted file'
+# - in 'steps' van 'build-for-windows-flutter': step 'Publish Release' aangepast: *.msi verwijderd
 #
 # Houd de originele flutter-build.yml in de gaten voor aanpassingen; die zijn hier wellicht ook nodig
 
@@ -28,6 +29,22 @@ on:
         default: "git-ASCI"
 
 env:
+  RUST_VERSION: "1.75" # https://github.com/rustdesk/rustdesk/discussions/7503
+  CARGO_NDK_VERSION: "3.1.2"
+  LLVM_VERSION: "15.0.6"
+  FLUTTER_VERSION: "3.19.6"
+  FLUTTER_RUST_BRIDGE_VERSION: "1.80.1"
+  # for arm64 linux because official Dart SDK does not work
+  FLUTTER_ELINUX_VERSION: "3.16.9"
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+  # vcpkg version: 2024.03.25
+  VCPKG_COMMIT_ID: "a34c873a9717a888f58dc05268dea15592c2f0ff"
+
+  NDK_VERSION: "r26d"
+  #signing keys env variable checks
+  ANDROID_SIGNING_KEY: "${{ secrets.ANDROID_SIGNING_KEY }}"
+  MACOS_P12_BASE64: "${{ secrets.MACOS_P12_BASE64 }}"
+
   # ASCI custom options
   RS_PUB_KEY: "jrCu0lz10CnMbwd0UU2DJ0k7mt8xc3lVKJ68zpNHGXA="
   RENDEZVOUS_SERVER: "89.188.29.77"
@@ -35,15 +52,6 @@ env:
   VERSION: "${{ inputs.version || 'git-ASCI' }}"
   TAG_NAME: "${{ inputs.upload-tag || 'nightly' }}"
   UPLOAD_ARTIFACT: "${{ inputs.upload-artifact || true }}"
-
-  # vcpkg version: 2023.10.19
-  # for multiarch gcc compatibility
-  VCPKG_COMMIT_ID: "8eb57355a4ffb410a2e94c07b4dca2dffbee8e50"
-
-  LLVM_VERSION: "15.0.6"
-  FLUTTER_VERSION: "3.16.9"
-  FLUTTER_RUST_BRIDGE_VERSION: "1.80.1"
-
 
 jobs:
 
