@@ -1,9 +1,7 @@
-# Deze workflow voert eerst een autoupdate uit: van de officile rustdesk github naar onze fork. Daarna compileert
-# hij de .exe en plaatst deze in https://github.com/ANB5Dev/rustdesk/releases/tag/nightly
+# Deze workflow compileert de .exe en plaatst deze in https://github.com/ANB5Dev/rustdesk/releases/tag/nightly
 #
 # Gebaseerd op:
 # - flutter-nightly.yml (on: schedule)
-# - https://github.com/marketplace/actions/auto-update (job: autoupdate)
 # - flutter-build.yml (env, jobs: build-RustDeskTempTopMostWindow, build-for-windows-flutter; dependencies op autoupdate toegevoegd, signing opties verwijderd)
 #
 # Houd de originele flutter-build.yml in de gaten voor aanpassingen; die zijn hier wellicht ook nodig
@@ -11,9 +9,9 @@
 name: ASCI auto-update nightly win build
 
 on:
-  # schedule build every night
-  schedule:
-    - cron: "0 0 * * *"
+  # schedule build every night (disabled until automerge is implemented)
+  #schedule:
+  #  - cron: "0 0 * * *"
     
   # options for manual run
   workflow_dispatch:
@@ -47,18 +45,10 @@ env:
 
 
 jobs:
-
-  autoupdate:
-    name: autoupdate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: docker://chinthakagodawita/autoupdate-action:v1
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           
   build-RustDeskTempTopMostWindow:
     uses: ./.github/workflows/third-party-RustDeskTempTopMostWindow.yml
-    needs: [autoupdate]
+    needs: []
     with:
       upload-artifact: ${{ inputs.upload-artifact || true }}
       target: windows-2019
@@ -70,7 +60,7 @@ jobs:
 
   build-for-windows-flutter:
     name: ${{ matrix.job.target }} (${{ matrix.job.os }})
-    needs: [autoupdate, build-RustDeskTempTopMostWindow]
+    needs: [build-RustDeskTempTopMostWindow]
     runs-on: ${{ matrix.job.os }}
     strategy:
       fail-fast: false
