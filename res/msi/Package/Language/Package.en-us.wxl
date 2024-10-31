@@ -8,7 +8,7 @@ This file contains the declaration of all the localizable strings.
 	<String Id="ProductLanguage" Value="1033" />
 
 	<!-- General strings -->
-	<String Id="DowngradeError" Value="A newer version of [ProductName] is already installed." />
+	<String Id="DowngradeError" Value="A newer version of ASCIRustDesk is already installed." />
 
 	<String Id="AR_Comment" Value="ASCIRustDesk" />
 
