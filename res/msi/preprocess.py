@@ -10,6 +10,7 @@ import subprocess
 import re
 from pathlib import Path
 import shutil
+import os
 
 g_indent_unit = "\t"
 g_version = ""
@@ -47,7 +48,7 @@ def make_parser():
         "--dist-dir",
         type=str,
         default="../../rustdesk",
-        help="The dist direcotry to install.",
+        help="The dist directory to install.",
     )
     parser.add_argument(
         "--arp",
@@ -440,25 +441,28 @@ def prepare_resources():
 
 
 def init_global_vars(dist_dir, app_name, args):
+    print(os.listdir(os.path.dirname(dist_dir)))
     dist_app = dist_dir.joinpath(app_name + ".exe")
-
+    
     def read_process_output(args):
         print('1')
+        print(f'dist_app: {dist_app}')
         process = subprocess.Popen(
-            f"{dist_app} {args}",
+            [dist_app, *args],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             shell=True,
         )
         print('2')
         output, _ = process.communicate()
+        print('3')
         return output.decode("utf-8").strip()
 
     global g_version
     global g_build_date
     g_version = args.version.replace("-", ".")
     if g_version == "":
-        g_version = read_process_output("--version")
+        g_version = read_process_output(["--version"])
     version_pattern = re.compile(r"\d+\.\d+\.\d+.*")
     if not version_pattern.match(g_version):
         print(f"Error: version {g_version} not found in {dist_app}")
@@ -469,7 +473,7 @@ def init_global_vars(dist_dir, app_name, args):
             raise ValueError(f"Invalid revision version: {args.revision_version}")    
         g_version = f"{g_version}.{args.revision_version}"
 
-    g_build_date = read_process_output("--build-date")
+    g_build_date = read_process_output(["--build-date"])
     build_date_pattern = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
     if not build_date_pattern.match(g_build_date):
         print(f"Error: build date {g_build_date} not found in {dist_app}")
