@@ -21,6 +21,15 @@ on:
             description: "tag to upload (e.g., nightly, stable)"
             required: false
             default: "stable"
+        app-name:
+            description: "name for the app"
+            required: true
+            default: "ASCI RustDesk"
+        manufacturer:
+            description: "name for the manufacturer"
+            required: true
+            default: "ASCI"
+
 # NOTE: F-Droid builder script 'flutter/build_fdroid.sh' reads environment
 # variables from this workflow!
 #
@@ -237,7 +246,7 @@ jobs:
       - name: Preprocess MSI
         if: env.UPLOAD_ARTIFACT == 'true'
         working-directory: ./res/msi
-        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name ASCI_RustDesk --manufacturer ASCI
+        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name ${{ inputs.app-name }} --manufacturer ${{ inputs.manufacturer }}
 
       - name: Restore NuGet packages
         if: env.UPLOAD_ARTIFACT == 'true'
@@ -253,8 +262,8 @@ jobs:
         if: env.UPLOAD_ARTIFACT == 'true'
         working-directory: ./res/msi
         run: |
-            mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
-            sha256sum ../../SignOutput/rustdesk-*.msi
+            mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
+            sha256sum ../../SignOutput/${{ inputs.app-name }}-*.msi
 
       - name: Upload build artifacts
         if: failure()
@@ -277,8 +286,8 @@ jobs:
           prerelease: true
           tag_name: ${{ env.TAG_NAME }}
           files: |
-            ./SignOutput/rustdesk-*.msi
-            ./SignOutput/rustdesk-*.exe
+            ./SignOutput/*.msi
+            ./SignOutput/*.exe
 
   build-for-macOS:
     name: ${{ matrix.job.target }}
