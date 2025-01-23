@@ -237,7 +237,7 @@ jobs:
       - name: Preprocess MSI
         if: env.UPLOAD_ARTIFACT == 'true'
         working-directory: ./res/msi
-        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name ASCI\ RustDesk --manufacturer ASCI
+        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name ASCI_RustDesk --manufacturer ASCI
 
       - name: Restore NuGet packages
         if: env.UPLOAD_ARTIFACT == 'true'
