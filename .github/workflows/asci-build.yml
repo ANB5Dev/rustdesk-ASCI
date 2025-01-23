@@ -10,6 +10,17 @@ on:
         type: string
         default: "nightly"
 
+  workflow_dispatch:
+    inputs:
+        upload-artifact:
+            description: "Whether to upload artifacts"
+            required: false
+            default: true
+            type: boolean
+        upload-tag:
+            description: "The tag to upload (e.g., nightly, stable)"
+            required: false
+            default: "stable"
 # NOTE: F-Droid builder script 'flutter/build_fdroid.sh' reads environment
 # variables from this workflow!
 #
