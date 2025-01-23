@@ -272,8 +272,15 @@ jobs:
         with:
           name: msi-build-artifacts
           path: ./res/msi
-          retention-days: 5
+          retention-days: 2
 
+      - name: Upload build artifacts 2
+        uses: actions/upload-artifact@v4
+        with:
+          name: msi-build-artifacts2
+          path: ./Package/bin/x64/Release/
+          retention-days: 2
+  
       - name: Sign rustdesk self-extracted file
         if: env.UPLOAD_ARTIFACT == 'true' && env.SIGN_BASE_URL != ''
         shell: bash
