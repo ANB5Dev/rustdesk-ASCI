@@ -443,12 +443,14 @@ def init_global_vars(dist_dir, app_name, args):
     dist_app = dist_dir.joinpath(app_name + ".exe")
 
     def read_process_output(args):
+        print('1')
         process = subprocess.Popen(
             f"{dist_app} {args}",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             shell=True,
         )
+        print('2')
         output, _ = process.communicate()
         return output.decode("utf-8").strip()
 
@@ -515,8 +517,10 @@ if __name__ == "__main__":
     if not prepare_resources():
         sys.exit(-1)
 
+    print('a')
     if not init_global_vars(dist_dir, app_name, args):
         sys.exit(-1)
+    print('b')
 
     update_license_file(app_name)
 
