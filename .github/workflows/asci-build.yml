@@ -237,7 +237,7 @@ jobs:
       - name: Preprocess MSI
         if: env.UPLOAD_ARTIFACT == 'true'
         working-directory: ./res/msi
-        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name "ASCI RustDesk" --manufacturer "ASCI"
+        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name ASCI\ RustDesk --manufacturer ASCI
 
       - name: Restore NuGet packages
         if: env.UPLOAD_ARTIFACT == 'true'
@@ -255,7 +255,7 @@ jobs:
         run: |
             mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
             sha256sum ../../SignOutput/rustdesk-*.msi
-            
+
       - name: Upload build artifacts
         if: failure()
         uses: actions/upload-artifact@v3
