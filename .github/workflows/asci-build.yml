@@ -239,7 +239,7 @@ jobs:
           python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
           popd
           mkdir -p ./SignOutput
-          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
+          mv ./target/release/rustdesk-portable-packer.exe "./SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.exe"
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -247,7 +247,7 @@ jobs:
       - name: Preprocess MSI
         if: env.UPLOAD_ARTIFACT == 'true'
         working-directory: ./res/msi
-        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name ${{ inputs.app-name }} --manufacturer ${{ inputs.manufacturer }}
+        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name "${{ inputs.app-name }}" --manufacturer "${{ inputs.manufacturer }}"
 
       - name: Restore NuGet packages
         if: env.UPLOAD_ARTIFACT == 'true'
@@ -263,7 +263,7 @@ jobs:
         if: env.UPLOAD_ARTIFACT == 'true'
         working-directory: ./res/msi
         run: |
-            mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
+            mv ./Package/bin/x64/Release/en-us/Package.msi "../../SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.msi"
             sha256sum ../../SignOutput/*.msi
 
       - name: Upload build artifacts
