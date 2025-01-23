@@ -191,6 +191,7 @@ jobs:
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
           mv -Force .\usbmmidd_v2 ./rustdesk
 
+
       - name: find Runner.res
         # Windows: find Runner.res (compiled from ./flutter/windows/runner/Runner.rc), copy to ./Runner.res
         # Runner.rc does not contain actual version, but Runner.res does
@@ -235,10 +236,10 @@ jobs:
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/ASCI_RustDesk.exe
+          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
           popd
           mkdir -p ./SignOutput
-          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
+          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -263,7 +264,7 @@ jobs:
         working-directory: ./res/msi
         run: |
             mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
-            sha256sum ../../SignOutput/${{ inputs.app-name }}-*.msi
+            sha256sum ../../SignOutput/*.msi
 
       - name: Upload build artifacts
         if: failure()
