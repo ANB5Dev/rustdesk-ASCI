@@ -13,12 +13,12 @@ on:
   workflow_dispatch:
     inputs:
         upload-artifact:
-            description: "Whether to upload artifacts"
+            description: "upload artifacts"
             required: false
             default: true
             type: boolean
         upload-tag:
-            description: "The tag to upload (e.g., nightly, stable)"
+            description: "tag to upload (e.g., nightly, stable)"
             required: false
             default: "stable"
 # NOTE: F-Droid builder script 'flutter/build_fdroid.sh' reads environment
@@ -238,7 +238,7 @@ jobs:
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           pushd ./res/msi
-          python preprocess.py --arp -d ../../rustdesk --custom --app-name 'ASCI RustDesk' --manufacturer 'ASCI'
+          python preprocess.py --arp -d ../../rustdesk --custom --app-name "ASCI RustDesk" --manufacturer "ASCI"
           nuget restore msi.sln
           msbuild msi.sln -p:Configuration=Release -p:Platform=x64 /p:TargetVersion=Windows10
           mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
