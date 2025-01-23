@@ -1,0 +1,55 @@
+<!--
+This file contains the declaration of all the localizable strings.
+-->
+<WixLocalization Culture="nl-nl" Codepage="1252"
+	xmlns="http://wixtoolset.org/schemas/v4/wxl">
+
+	<String Id="SummaryCodepage" Value="1252" />
+	<String Id="ProductLanguage" Value="1043" />
+
+	<!-- General strings -->
+	<String Id="DowngradeError" Value="Een nieuwere versie van [ProductName] is al geinstalleerd." />
+
+	<String Id="AR_Comment" Value="RustDesk" />
+
+	<String Id="F_App" Value="RustDesk" />
+	<String Id="F_App_Desc" Value="RustDesk - Installatieprogramma." />
+
+	<String Id="SC_Uninstall" Value="Verwijder RustDesk" />
+	<String Id="SC_Uninstall_Desc" Value="Verwijdert RustDesk van de computer" />
+
+	<!-- Client related strings -->
+	<String Id="F_Client" Value="Client" />
+	<String Id="F_Client_Desc" Value="De gebruikersinterface. Speelt mediabestanden." />
+	<String Id="F_Client_Plugins" Value="Plugins" />
+	<String Id="F_Client_Plugins_Desc" Value="Plugins voor de client." />
+	<String Id="F_LAVFilters" Value="LAV Filters" />
+	<String Id="F_LAVFilters_Desc" Value="Aanbevolen directshow-filters voor de beste audio- en videoweergave." />
+
+	<String Id="SC_Client" Value="RustDesk" />
+	<String Id="SC_Client_Desc" Value="Start RustDesk." />
+
+	<String Id="SC_Client_Tray" Value="RustDesk Tray" />
+	<String Id="SC_Client_Tray_Desc" Value="Start RustDesk tray." />
+
+	<!-- Server related strings -->
+	<String Id="F_Server" Value="Server" />
+	<String Id="F_Server_Desc" Value="De server van RustDesk. Bevat de MediaLibrary en andere services." />
+	<String Id="F_Server_Plugins" Value="Plugins" />
+	<String Id="F_Server_Plugins_Desc" Value="Plugins voor de server." />
+
+	<String Id="Service_DisplayName" Value="RustDesk Service" />
+	<String Id="Service_Description" Value="Deze service voert de RustDesk Server uit." />
+
+	<!-- Launch Conditions -->
+	<String Id="LC_OS" Value="[ProductName] vereist minimaal Windows 7 / 2008 R2 als besturingssysteem." />
+	<String Id="LC_ADMIN" Value="Administrator-rechten zijn vereist om [ProductName] te installeren." />
+
+	<!-- User Interfaces -->
+	<String Id="AnotherAppDialogTitle" Value="Annuleer installatie."/>
+	<String Id="AnotherAppDialogDescription" Value="De applicatie is al geinstalleerd via zelf-installatie, verwijder deze eerst."/>
+
+	<String Id="MyInstallDirDlgDesktopShortcuts" Value="Desktopicoon toevoegen" />
+	<String Id="MyInstallDirDlgStartMenuShortcuts" Value="Shortcuts in het startmenu toevoegen" />
+
+</WixLocalization>
