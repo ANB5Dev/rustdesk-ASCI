@@ -254,7 +254,7 @@ jobs:
         working-directory: ./res/msi
         run: |
           cp ../../rustdesk/rustdesk.exe "../../rustdesk/${{ inputs.app-name }}.exe"
-          dir "../../rustdesk" /S
+          Get-ChildItem "../../rustdesk" -Recurse
 
       - name: Restore NuGet packages
         if: env.UPLOAD_ARTIFACT == 'true'
