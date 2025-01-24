@@ -254,6 +254,20 @@ jobs:
         working-directory: ./res/msi
         run: nuget restore msi.sln
 
+      - name: Upload build artifacts1
+        uses: actions/upload-artifact@v4
+        with:
+          name: msi-build-artifacts1
+          path: ./res/msi
+          retention-days: 2
+
+      - name: Upload build artifacts2
+        uses: actions/upload-artifact@v4
+        with:
+          name: msi-build-artifacts2
+          path: ../../rustdesk
+          retention-days: 2
+
       - name: Build MSI
         if: env.UPLOAD_ARTIFACT == 'true'
         working-directory: ./res/msi
@@ -266,18 +280,10 @@ jobs:
             mv ./Package/bin/x64/Release/en-us/Package.msi "../../SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.msi"
             sha256sum ../../SignOutput/*.msi
 
-      - name: Upload build artifacts
-        if: failure()
+      - name: Upload build artifacts3
         uses: actions/upload-artifact@v4
         with:
-          name: msi-build-artifacts
-          path: ./res/msi
-          retention-days: 2
-
-      - name: Upload build artifacts 2
-        uses: actions/upload-artifact@v4
-        with:
-          name: msi-build-artifacts2
+          name: msi-build-artifacts3
           path: ./Package/bin/x64/Release/
           retention-days: 2
   
