@@ -1,4 +1,4 @@
-name: Build the ASCI flutter version of the RustDesk
+name: Build the flutter version of the RustDesk
 
 on:
   workflow_call:
@@ -21,14 +21,6 @@ on:
             description: "tag to upload (e.g., nightly, stable)"
             required: false
             default: "stable"
-        app-name:
-            description: "name for the app"
-            required: true
-            default: "ASCI RustDesk"
-        manufacturer:
-            description: "name for the manufacturer"
-            required: true
-            default: "ASCI"
 
 # NOTE: F-Droid builder script 'flutter/build_fdroid.sh' reads environment
 # variables from this workflow!
@@ -191,7 +183,6 @@ jobs:
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
           mv -Force .\usbmmidd_v2 ./rustdesk
 
-
       - name: find Runner.res
         # Windows: find Runner.res (compiled from ./flutter/windows/runner/Runner.rc), copy to ./Runner.res
         # Runner.rc does not contain actual version, but Runner.res does
@@ -239,54 +230,21 @@ jobs:
           python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
           popd
           mkdir -p ./SignOutput
-          mv ./target/release/rustdesk-portable-packer.exe "./SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.exe"
+          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
 
-      - name: Preprocess MSI
+      - name: Build msi
         if: env.UPLOAD_ARTIFACT == 'true'
-        working-directory: ./res/msi
-        run: python preprocess.py --arp -d ../../rustdesk --custom --app-name "${{ inputs.app-name }}" --manufacturer "${{ inputs.manufacturer }}"
-
-      - name: Copy exe
-        if: env.UPLOAD_ARTIFACT == 'true'
-        working-directory: ./res/msi
         run: |
-          cp ../../rustdesk/rustdesk.exe "../../rustdesk/${{ inputs.app-name }}.exe"
-          Get-ChildItem "../../rustdesk" -Recurse
+          pushd ./res/msi
+          python preprocess.py --arp -d ../../rustdesk
+          nuget restore msi.sln
+          msbuild msi.sln -p:Configuration=Release -p:Platform=x64 /p:TargetVersion=Windows10
+          mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
+          sha256sum ../../SignOutput/rustdesk-*.msi
 
-      - name: Restore NuGet packages
-        if: env.UPLOAD_ARTIFACT == 'true'
-        working-directory: ./res/msi
-        run: nuget restore msi.sln
-
-      - name: Upload build artifacts1
-        uses: actions/upload-artifact@v4
-        with:
-          name: msi-build-artifacts1
-          path: ./res/msi
-          retention-days: 2
-
-      - name: Build MSI
-        if: env.UPLOAD_ARTIFACT == 'true'
-        working-directory: ./res/msi
-        run: msbuild msi.sln -p:Configuration=Release -p:Platform=x64 /p:TargetVersion=Windows10
-
-      - name: Move and Hash MSI
-        if: env.UPLOAD_ARTIFACT == 'true'
-        working-directory: ./res/msi
-        run: |
-            mv ./Package/bin/x64/Release/en-us/Package.msi "../../SignOutput/${{ inputs.app-name }}-${{ env.VERSION }}-${{ matrix.job.arch }}.msi"
-            sha256sum ../../SignOutput/*.msi
-
-      - name: Upload build artifacts3
-        uses: actions/upload-artifact@v4
-        with:
-          name: msi-build-artifacts3
-          path: ./Package/bin/x64/Release/
-          retention-days: 2
-  
       - name: Sign rustdesk self-extracted file
         if: env.UPLOAD_ARTIFACT == 'true' && env.SIGN_BASE_URL != ''
         shell: bash
@@ -300,8 +258,8 @@ jobs:
           prerelease: true
           tag_name: ${{ env.TAG_NAME }}
           files: |
-            ./SignOutput/*.msi
-            ./SignOutput/*.exe
+            ./SignOutput/rustdesk-*.msi
+            ./SignOutput/rustdesk-*.exe
 
   build-for-macOS:
     name: ${{ matrix.job.target }}
