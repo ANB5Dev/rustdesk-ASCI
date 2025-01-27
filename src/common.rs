@@ -845,7 +845,7 @@ async fn check_software_update_() -> hbb_common::ResultType<()> {
 
 #[inline]
 pub fn get_app_name() -> String {
-    "ASCI RustDesk"
+    "ASCI RustDesk".to_string()
 }
 
 #[inline]
