@@ -10,13 +10,13 @@ This file contains the declaration of all the localizable strings.
 	<!-- General strings -->
 	<String Id="DowngradeError" Value="Een nieuwere versie van [ProductName] is al geinstalleerd." />
 
-	<String Id="AR_Comment" Value="RustDesk" />
+	<String Id="AR_Comment" Value="ASCI RustDesk" />
 
-	<String Id="F_App" Value="RustDesk" />
-	<String Id="F_App_Desc" Value="RustDesk - Installatieprogramma." />
+	<String Id="F_App" Value="ASCI RustDesk" />
+	<String Id="F_App_Desc" Value="ASCI RustDesk - Installatieprogramma." />
 
-	<String Id="SC_Uninstall" Value="Verwijder RustDesk" />
-	<String Id="SC_Uninstall_Desc" Value="Verwijdert RustDesk van de computer" />
+	<String Id="SC_Uninstall" Value="Verwijder ASCI RustDesk" />
+	<String Id="SC_Uninstall_Desc" Value="Verwijdert ASCI RustDesk van de computer" />
 
 	<!-- Client related strings -->
 	<String Id="F_Client" Value="Client" />
@@ -26,20 +26,20 @@ This file contains the declaration of all the localizable strings.
 	<String Id="F_LAVFilters" Value="LAV Filters" />
 	<String Id="F_LAVFilters_Desc" Value="Aanbevolen directshow-filters voor de beste audio- en videoweergave." />
 
-	<String Id="SC_Client" Value="RustDesk" />
-	<String Id="SC_Client_Desc" Value="Start RustDesk." />
+	<String Id="SC_Client" Value="ASCI RustDesk" />
+	<String Id="SC_Client_Desc" Value="Start ASCI RustDesk." />
 
-	<String Id="SC_Client_Tray" Value="RustDesk Tray" />
-	<String Id="SC_Client_Tray_Desc" Value="Start RustDesk tray." />
+	<String Id="SC_Client_Tray" Value="ASCI RustDesk Tray" />
+	<String Id="SC_Client_Tray_Desc" Value="Start ASCI RustDesk tray." />
 
 	<!-- Server related strings -->
 	<String Id="F_Server" Value="Server" />
-	<String Id="F_Server_Desc" Value="De server van RustDesk. Bevat de MediaLibrary en andere services." />
+	<String Id="F_Server_Desc" Value="De server van ASCI RustDesk. Bevat de MediaLibrary en andere services." />
 	<String Id="F_Server_Plugins" Value="Plugins" />
 	<String Id="F_Server_Plugins_Desc" Value="Plugins voor de server." />
 
-	<String Id="Service_DisplayName" Value="RustDesk Service" />
-	<String Id="Service_Description" Value="Deze service voert de RustDesk Server uit." />
+	<String Id="Service_DisplayName" Value="ASCI RustDesk Service" />
+	<String Id="Service_Description" Value="Deze service voert de ASCI RustDesk Server uit." />
 
 	<!-- Launch Conditions -->
 	<String Id="LC_OS" Value="[ProductName] vereist minimaal Windows 7 / 2008 R2 als besturingssysteem." />
