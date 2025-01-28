@@ -337,7 +337,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Secure Connection", "Beveiligde Verbinding"),
         ("Insecure Connection", "Onveilige Verbinding"),
         ("Scale original", "Oorspronkelijke schaal"),
-        ("Scale adaptive", "Schaalaanpassing"),
+        ("Scale adaptive", "Automatisch schalen"),
         ("General", "Algemeen"),
         ("Security", "Beveiliging"),
         ("Theme", "Thema"),
