@@ -1344,7 +1344,7 @@ copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{path}\\\"
         copy_exe = copy_exe_cmd(&src_exe, &exe, &path)?,
         import_config = get_import_config(&exe),
     );
-    dbg!(cmds);
+    dbg!(&cmds);
     run_cmds(cmds, debug, "install")?;
     run_after_run_cmds(silent);
     Ok(())
