@@ -763,7 +763,6 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
                 permissions(context),
                 password(context),
                 _Card(title: '2FA', children: [tfa()]),
-                _Card(title: 'ID', children: [changeId()]),
                 more(context),
               ]),
             ),
