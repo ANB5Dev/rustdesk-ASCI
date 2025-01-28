@@ -155,7 +155,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Installing ...", "Installeren ..."),
         ("Install", "Installeer"),
         ("Installation", "Installatie"),
-        ("Installation Path", "Installatiepad"),
+        ("Installation Path", "Locatie"),
         ("Create start menu shortcuts", "Startmenu-snelkoppelingen maken"),
         ("Create desktop icon", "Bureaubladpictogram maken"),
         ("agreement_tip", "Het starten van de installatie betekent het accepteren van de licentieovereenkomst."),
