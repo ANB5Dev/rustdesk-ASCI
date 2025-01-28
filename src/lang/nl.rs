@@ -53,7 +53,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Audio Input", "Audioingang"),
         ("Enhancements", "Verbeteringen"),
         ("Hardware Codec", "Hardwarecodec"),
-        ("Adaptive bitrate", "Aangepaste bitrate"),
+        ("Adaptive bitrate", "Bitrate automatisch aanpassen"),
         ("ID Server", "ID Server"),
         ("Relay Server", "Relay Server"),
         ("API Server", "API Server"),
