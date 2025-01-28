@@ -370,7 +370,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Stop session recording", "Stop de sessieopname"),
         ("Enable recording session", "Sessieopname Activeren"),
         ("Enable LAN discovery", "LAN-detectie inschakelen"),
-        ("Deny LAN discovery", "LAN-detectie Weigeren"),
+        ("Deny LAN discovery", "LAN-detectie weigeren"),
         ("Write a message", "Schrijf een bericht"),
         ("Prompt", "Verzoek"),
         ("Please wait for confirmation of UAC...", "Wacht op bevestiging van UAC..."),
