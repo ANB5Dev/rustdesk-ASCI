@@ -1328,7 +1328,6 @@ if exist \"{tmp_path}\\{app_name} Tray.lnk\" del /f /q \"{tmp_path}\\{app_name} 
     );
     let src_exe = std::env::current_exe()?.to_str().unwrap_or("").to_string();
 
-    log_to_home(&format!("meta: {}", &meta));
     log_to_home(&format!("size: {}", &size));
     log_to_home(&format!("dels: {}", &dels));
     log_to_home(&format!("src_exe: {}", &src_exe));
