@@ -67,23 +67,26 @@ use winreg::{enums::*, RegKey};
 
 use std::fs::OpenOptions;
 use std::io::Write;
-use log::{info, debug, error};
-use simple_logger::SimpleLogger;
+use std::env;
 
-pub fn init_logger() {
-    let file = OpenOptions::new()
-        .create(true)
+fn log_to_home(message: &str) {
+    // Get the user's home directory
+    let home_dir = env::var("USERPROFILE").expect("Failed to find USERPROFILE (home directory)");
+    
+    // Hardcoded log file path in the home directory
+    let log_file_path = format!("{}\\rustdesk-log.txt", home_dir);
+
+    // Open the file in append mode, create it if it doesn't exist
+    let mut file = OpenOptions::new()
         .append(true)
-        .open("rustdesk_debug_log.txt")
-        .unwrap();
+        .create(true)
+        .open(&log_file_path)
+        .expect("Unable to open or create log file");
 
-    // You can write directly to the file using a custom logger, but to keep it simple:
-    // For simplicity, use simple_logger with file output:
-    SimpleLogger::new()
-        .with_write_log_to(file)
-        .init()
-        .unwrap();
-
+    // Write the log message with a newline
+    if let Err(e) = writeln!(file, "{}", message) {
+        eprintln!("Failed to write to log file: {}", e);
+    }
 }
 
 pub const FLUTTER_RUNNER_WIN32_WINDOW_CLASS: &'static str = "FLUTTER_RUNNER_WIN32_WINDOW"; // main window, install window
@@ -1204,7 +1207,6 @@ fn get_after_install(
 }
 
 pub fn install_me(options: &str, path: String, silent: bool, debug: bool) -> ResultType<()> {
-    init_logger();
     let uninstall_str = get_uninstall(false);
     let mut path = path.trim_end_matches('\\').to_owned();
     let (subkey, _path, start_menu, exe) = get_default_install_info();
@@ -1216,9 +1218,9 @@ pub fn install_me(options: &str, path: String, silent: bool, debug: bool) -> Res
         exe = exe.replace(&_path, &path);
     }
 
-    info!("uninstall_str: {}", &uninstall_str);
-    info!("path: {}", &path);
-    info!("subkey: {}, start_menu: {}, exe: {}", &subkey, &start_menu, &exe);
+    log_to_home(&format!("uninstall_str: {}", &uninstall_str));
+    log_to_home(&format!("path: {}", &path));
+    log_to_home(&format!("subkey: {}, start_menu: {}, exe: {}", &subkey, &start_menu, &exe));
 
     let mut version_major = "0";
     let mut version_minor = "0";
@@ -1234,10 +1236,10 @@ pub fn install_me(options: &str, path: String, silent: bool, debug: bool) -> Res
         version_build = versions[2];
     }
     let app_name = crate::get_app_name();
-    info!("app_name: {}", &app_name);
+    log_to_home(&format!("app_name: {}", &app_name));
 
     let tmp_path = std::env::temp_dir().to_string_lossy().to_string();
-    info!("tmp_path: {}", &tmp_path);
+    log_to_home(&format!("tmp_path: {}", &tmp_path));
 
     let mk_shortcut = write_cmds(
         format!(
@@ -1256,7 +1258,7 @@ oLink.Save
     .to_str()
     .unwrap_or("")
     .to_owned();
-    info!("mk_shortcut: {}", &mk_shortcut);
+    log_to_home(&format!("mk_shortcut: {}", &mk_shortcut));
 
     // https://superuser.com/questions/392061/how-to-make-a-shortcut-from-cmd
     let uninstall_shortcut = write_cmds(
@@ -1277,10 +1279,10 @@ oLink.Save
     .to_str()
     .unwrap_or("")
     .to_owned();
-    info!("uninstall_shortcut: {}", &uninstall_shortcut);
+    log_to_home(&format!("uninstall_shortcut: {}", &uninstall_shortcut));
 
     let tray_shortcut = get_tray_shortcut(&exe, &tmp_path)?;
-    info!("tray_shortcut: {}", &tray_shortcut);
+    log_to_home(&format!("tray_shortcut: {}", &tray_shortcut));
 
     let mut reg_value_desktop_shortcuts = "0".to_owned();
     let mut reg_value_start_menu_shortcuts = "0".to_owned();
@@ -1304,9 +1306,9 @@ copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{start_menu}\\\"
         );
         reg_value_start_menu_shortcuts = "1".to_owned();
     }
-    info!("shortcuts: {}", &shortcuts);
-    info!("reg_value_desktop_shortcuts: {}", &reg_value_desktop_shortcuts);
-    info!("reg_value_start_menu_shortcuts: {}", &reg_value_start_menu_shortcuts);
+    log_to_home(&format!("shortcuts: {}", &shortcuts));
+    log_to_home(&format!("reg_value_desktop_shortcuts: {}", &reg_value_desktop_shortcuts));
+    log_to_home(&format!("reg_value_start_menu_shortcuts: {}", &reg_value_start_menu_shortcuts));
 
     let meta = std::fs::symlink_metadata(std::env::current_exe()?)?;
     let size = meta.len() / 1024;
@@ -1326,10 +1328,10 @@ if exist \"{tmp_path}\\{app_name} Tray.lnk\" del /f /q \"{tmp_path}\\{app_name} 
     );
     let src_exe = std::env::current_exe()?.to_str().unwrap_or("").to_string();
 
-    info!("meta: {}", &meta);
-    info!("size: {}", &size);
-    info!("dels: {}", &dels);
-    info!("src_exe: {}", &src_exe);
+    log_to_home(&format!("meta: {}", &meta));
+    log_to_home(&format!("size: {}", &size));
+    log_to_home(&format!("dels: {}", &dels));
+    log_to_home(&format!("src_exe: {}", &src_exe));
 
     // potential bug here: if run_cmd cancelled, but config file is changed.
     if let Some(lic) = get_license() {
@@ -1346,7 +1348,7 @@ cscript \"{tray_shortcut}\"
 copy /Y \"{tmp_path}\\{app_name} Tray.lnk\" \"%PROGRAMDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\\"
 ")
     };
-    info!("tray_shortcuts: {}", &tray_shortcuts);
+    log_to_home(&format!("tray_shortcuts: {}", &tray_shortcuts));
 
     let cmds = format!(
         "
@@ -1390,7 +1392,7 @@ copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{path}\\\"
         copy_exe = copy_exe_cmd(&src_exe, &exe, &path)?,
         import_config = get_import_config(&exe),
     );
-    info!("cmds: {}", &cmds);
+    log_to_home(&format!("cmds: {}", &cmds));
     run_cmds(cmds, debug, "install")?;
     run_after_run_cmds(silent);
     Ok(())
