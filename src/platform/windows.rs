@@ -1183,6 +1183,7 @@ fn get_after_install(
 }
 
 pub fn install_me(options: &str, path: String, silent: bool, debug: bool) -> ResultType<()> {
+    println!("hello world");
     let uninstall_str = get_uninstall(false);
     let mut path = path.trim_end_matches('\\').to_owned();
     let (subkey, _path, start_menu, exe) = get_default_install_info();
@@ -1343,6 +1344,7 @@ copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{path}\\\"
         copy_exe = copy_exe_cmd(&src_exe, &exe, &path)?,
         import_config = get_import_config(&exe),
     );
+    dbg!(cmds);
     run_cmds(cmds, debug, "install")?;
     run_after_run_cmds(silent);
     Ok(())
