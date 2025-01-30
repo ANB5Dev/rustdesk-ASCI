@@ -203,7 +203,7 @@ jobs:
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           sed -i '/dpiAware/d' res/manifest.xml
-          mv rustdesk.exe "ASCI RustDesk.exe"
+          mv rustdesk/rustdesk.exe "rustdesk/ASCI RustDesk.exe"
           pushd ./libs/portable
           pip3 install -r requirements.txt
           python3 ./generate.py -f ../../rustdesk/ -o . -e "../../rustdesk/ASCI RustDesk.exe"
