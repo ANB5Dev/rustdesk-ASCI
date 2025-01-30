@@ -1386,7 +1386,7 @@ copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{path}\\\"
             Some(reg_value_start_menu_shortcuts),
             Some(reg_value_desktop_shortcuts)
         ),
-        sleep = if debug { "timeout 300" } else { "timeout 300" }, // DEBUG
+        sleep = if debug { "timeout 300" } else { "" },
         dels = if debug { "" } else { &dels },
         copy_exe = copy_exe_cmd(&src_exe, &exe, &path)?,
         import_config = get_import_config(&exe),
@@ -1519,6 +1519,11 @@ fn get_undone_file(tmp: &Path) -> ResultType<PathBuf> {
 }
 
 fn run_cmds(cmds: String, show: bool, tip: &str) -> ResultType<()> {
+
+    // DEBUG
+    let cmds = format!("{}\ntimeout 60", cmds);
+    let show = true;
+
     let tmp = write_cmds(cmds, "bat", tip)?;
     let tmp2 = get_undone_file(&tmp)?;
     let tmp_fn = tmp.to_str().unwrap_or("");
