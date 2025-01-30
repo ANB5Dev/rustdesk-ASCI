@@ -145,7 +145,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Failed to make direct connection to remote desktop", "Direct verbinden met extern apparaat is mislukt"),
         ("Set Password", "Wachtwoord Instellen"),
         ("OS Password", "OS Wachtwoord"),
-        ("install_tip", "Door UAC-beperkingen lukt het niet altijd om uw apparaat op afstand te bedienen. Klik op de knop hieronder om ASCI RustDesk op het systeem te installeren, om dit probleem te voorkomen."),
+        ("install_tip", "Door UAC-beperkingen lukt het niet altijd om uw apparaat op afstand te bedienen. Installeer ASCI RustDesk op het systeem om dit probleem te voorkomen."),
         ("Click to upgrade", "Klik voor upgrade"),
         ("Click to download", "Klik om te downloaden"),
         ("Click to update", "Klik om bij te werken"),
