@@ -1521,7 +1521,7 @@ fn get_undone_file(tmp: &Path) -> ResultType<PathBuf> {
 fn run_cmds(cmds: String, show: bool, tip: &str) -> ResultType<()> {
 
     // DEBUG
-    let cmds = format!("{}\ntimeout 60", cmds);
+    let cmds = format!("{}\npause", cmds);
     let show = true;
 
     let tmp = write_cmds(cmds, "bat", tip)?;
