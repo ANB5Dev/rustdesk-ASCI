@@ -1924,10 +1924,10 @@ class _AboutState extends State<_About> {
                   ).marginSymmetric(vertical: 4.0)),
               InkWell(
                   onTap: () {
-                    launchUrlString('https://asci.nl');
+                    launchUrlString('https://github.com/ANB5Dev/');
                   },
                   child: Text(
-                    translate('Website'),
+                    translate('Source code'),
                     style: linkStyle,
                   ).marginSymmetric(vertical: 4.0)),
               Container(
@@ -1942,7 +1942,11 @@ class _AboutState extends State<_About> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${DateTime.now().toString().substring(0, 4)} ASCI Technologies BV',
+                            '''Copyright © ${DateTime.now().toString().substring(0, 4)} Purslane Ltd., ASCI Technologies BV.
+
+                            This program is based on the work originally created by Purslane Ltd. and has been adapted by ASCI Technologies BV.
+
+                            Licensed under the AGPL v3. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.''',
                             style: const TextStyle(color: Colors.white),
                           )
                         ],
