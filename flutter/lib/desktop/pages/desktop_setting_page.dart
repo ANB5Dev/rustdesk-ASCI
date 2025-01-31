@@ -1916,7 +1916,16 @@ class _AboutState extends State<_About> {
                         .marginSymmetric(vertical: 4.0)),
               InkWell(
                   onTap: () {
-                    launchUrlString('https://github.com/ANB5Dev/');
+                    launchUrlString(
+                        'https://www.gnu.org/licenses/agpl-3.0.html');
+                  },
+                  child: Text(
+                    translate('License'),
+                    style: linkStyle,
+                  ).marginSymmetric(vertical: 4.0)),
+              InkWell(
+                  onTap: () {
+                    launchUrlString('https://github.com/ANB5Dev/rustdesk/');
                   },
                   child: Text(
                     translate('Source'),
@@ -1934,7 +1943,7 @@ class _AboutState extends State<_About> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Copyrights © ${DateTime.now().toString().substring(0, 4)} Purslane Ltd. & ASCI Technologies BV.\n\nThis program is based on the work originally created by Purslane Ltd. and has been adapted by ASCI Technologies BV.\n\nThis is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License (AGPL) as published by the Free Software Foundation, either version 3 of the License, or any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the AGPL for more details.',
+                            'Copyrights © ${DateTime.now().toString().substring(0, 4)} Purslane Ltd. & ASCI Technologies BV.\n\nThis program is based on the work originally created by Purslane Ltd. and has been adapted by ASCI Technologies BV.\n\nThis program is distributed under the terms of the GNU Affero General Public License (AGPL), version 3 or later, as published by the Free Software Foundation. You may redistribute and/or modify this software under the terms of the AGPL. See the AGPL for more details.',
                             style: const TextStyle(color: Colors.white),
                           )
                         ],
