@@ -1943,7 +1943,7 @@ class _AboutState extends State<_About> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Copyrights © ${DateTime.now().toString().substring(0, 4)} Purslane Ltd. & ASCI Technologies BV.\n\nThis program is based on the work originally created by Purslane Ltd. and has been adapted by ASCI Technologies BV.\n\nThis program is distributed under the terms of the GNU Affero General Public License (AGPL), version 3 or later, as published by the Free Software Foundation. You may redistribute and/or modify this software under the terms of the AGPL. See the AGPL for more details.',
+                            'Copyright © ${DateTime.now().toString().substring(0, 4)} Purslane Ltd. & ASCI Technologies BV.\n\nThis program is based on work originally created by Purslane Ltd. and has been adapted by ASCI Technologies BV.\n\nThis program is distributed under the terms of the GNU Affero General Public License (AGPL), version 3 or later, as published by the Free Software Foundation. You may redistribute and/or modify this software under the terms of the AGPL. See the AGPL for more details.',
                             style: const TextStyle(color: Colors.white),
                           )
                         ],
