@@ -196,8 +196,13 @@ void showServerSettingsWithValue(
     }
 
     Widget buildField(
-        String label, TextEditingController controller, String errorMsg,
-        {String? Function(String?)? validator, bool autofocus = false}) {
+      String label,
+      TextEditingController controller,
+      String errorMsg, {
+      String? Function(String?)? validator,
+      bool autofocus = false,
+      String? placeholder,
+    }) {
       if (isDesktop || isWeb) {
         return Row(
           children: [
@@ -213,6 +218,7 @@ void showServerSettingsWithValue(
                   errorText: errorMsg.isEmpty ? null : errorMsg,
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  hintText: placeholder,
                 ),
                 validator: validator,
                 autofocus: autofocus,
@@ -237,6 +243,10 @@ void showServerSettingsWithValue(
         children: [
           Expanded(child: Text(translate('ID/Relay Server'))),
           ...ServerConfigImportExportWidgets(controllers, errMsgs),
+          Text(translate('You can configure a custom server here.'),
+              style: TextStyle(
+                  fontSize:
+                      15)), // fontSize == _kContentFontSize in desktop_setting_page.dart
         ],
       ),
       content: ConstrainedBox(
@@ -246,7 +256,8 @@ void showServerSettingsWithValue(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   buildField(translate('ID Server'), idCtrl, idServerMsg.value,
-                      autofocus: true),
+                      autofocus: true,
+                      placeholder: "default: ASCI Rustdesk Server"),
                   SizedBox(height: 8),
                   if (!isIOS && !isWeb) ...[
                     buildField(translate('Relay Server'), relayCtrl,
